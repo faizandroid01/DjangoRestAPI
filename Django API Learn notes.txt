@@ -1,0 +1,138 @@
+1. create virtual environment in Python
+   
+    python -m venv <env_name>
+	
+2. Activate Venv
+   
+    source venv/Scripts/activate
+
+3. Deactivate the Venv
+	
+	deactivate
+	
+4. To See all the python materials installed 
+
+   pip freeze
+
+5.  Install Django and djangorestframework
+
+    pip install django
+    pip install djangorestframework   
+	
+---------------------------------------------------------------'
+After setting up the django
+
+* add "rest_framework" in INSTALLED_APPS in settings.py	
+      INSTALLED_APPS = [
+    ...
+    'rest_framework',
+   ]
+
+
+1. to migrate the stuffs of db and admins in django before server run
+
+     winpty python manage.py migrate
+	 
+2.   To start the server
+
+	python manage.py runserver
+	
+3. info - Ctrl + C is used to break out of a server 	
+	
+------------------THE SERVER IS STARTED---------------------------
+--------------------------------------------------------------------	
+
+* go to root project , create another app "courses"
+
+    python manage.py startapp courses
+	
+* include the courses in base project's (here djangoapi) settings.py 	
+
+* Add include lib in urls import  in base project's (here djangoapi) urls .py
+
+    from django.urls import path, include
+	
+------------------------------------------------------------------------
+
+
+from django.contrib import admin  this comes with admin lib which contains Database stuff
+	
+	
+* to create super user 
+   winpty python manage.py createsuperuser
+   
+   username : mahmed97	
+   pwd - mahmed@97
+   mail - faizrocx9211@gmail.com
+   
+* to access admin site
+   
+   localhost:8000/admin
+
+--------------------------------------------------------------------------
+
+* create Models in the extended to models.Model
+
+* django gets this models as Database change through migrations
+
+* make migrations
+   python manage.py makemigrations
+   
+* push migrations
+  python manage.py migrate 
+  
+---------------------------------------------------
+MODELS HAS TO BE REGISTERED TO ADMIN IN ORDER TO WORK  
+
+in admin.py 
+
+# register the model with admin
+
+admin.site.register(Course)
+-----------------------------------------------------
+SERIALIZER HAS TO BE CREATED WRT MODELS IN ORDER TO CONVERT TO AND FROM JSON TO DB OBJECT
+
+- HyperlinkedModelSerializer
+- ModelSerializer
+
+Eg -
+from rest_framework import serializers
+
+class CourseSerializer(serializers.HyperlinkedModelSerializer):
+    class Meta:
+        model = Course
+        fields = ('id','name','language','price','url')
+
+-----------------------------------------------------------
+CREATE VIEW
+
+from rest_framework import viewsets
+
+class CourseView(viewsets.ModelViewSet):
+    queryset = Course.objects.all()
+    serializer_class = CourseSerializer
+
+-----------------------------------------------------------
+   Now finally create router in urls.py 
+   
+Eg- 
+   from rest_framework import routers
+   
+   router = routers.DefaultRouter()
+   router.register('courses',views.CourseView)
+   
+   
+   urlpatterns = [
+    path('',include(router.urls)),
+]
+
+-------------------------------------AND---------------------
+
+REGISTER THE PATH URL in base urls.py
+
+    path('',include('courses.urls')),
+
+
+   
+	
+	
